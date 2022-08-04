@@ -1,25 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect, useState} from 'react';
+import {useSearchParams} from "react-router-dom";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+    const [posts, setPosts] = useState([]);
+    const [searchParams, setSearchParams] = useSearchParams();
+    // const searchQuery = searchParams.get('filter') || '';
+
+    useEffect(() => {
+        fetch(`https://jsonplaceholder.typicode.com/posts`)
+            .then(value => value.json())
+            .then(value => setPosts(value));
+    }, [])
+
+
+    return (
+        <div>
+            <form>
+                <input
+                    value={searchParams.get('filter') || ''}
+                    onChange={(event) => {
+                        let filter = event.target.value;
+                        if(filter){
+                            setSearchParams( {filter} );
+                        }else {
+                            setSearchParams( {} );
+                        }
+                    }}
+                />
+            </form>
+            {
+                posts
+                    .filter((post) => {
+                        let filter = searchParams.get("filter");
+                        if (!filter) return true;
+                        let title = post.title.toLowerCase();
+                        return title.includes(filter.toLowerCase());
+                    })
+                    .map((post) => (
+                        <h3 key={post.id}>{post.title}</h3>
+                    ))
+            }
+        </div>
+    );
 }
 
 export default App;
