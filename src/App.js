@@ -18,7 +18,7 @@ function App() {
         <div>
             <form>
                 <input
-                    value={searchParams.get('filter') || ''}
+                    //value={searchParams.get('filter') || ''}
                     onChange={(event) => {
                         let filter = event.target.value;
                         if(filter){
